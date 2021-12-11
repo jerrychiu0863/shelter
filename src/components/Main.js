@@ -7,6 +7,8 @@ const Main = () => {
   const [data, setData] = useState([]);
   const [shelter, setShelter] = useState('');
   const [kind, setKind] = useState('');
+  const [showModal, setShowModal] = useState(true);
+  const [selectedAni, setSelectedAni] = useState('');
 
   const fetchData = (shelter = '', kind = '') => {
     fetch(
@@ -35,6 +37,19 @@ const Main = () => {
     setKind(e.target.value);
     fetchData(shelter, e.target.value);
   };
+
+  const renderBodyType = (type) => {
+    switch (type) {
+      case 'SMALL':
+        return '小';
+      case 'MEDIUM':
+        return '中';
+      case 'BIG':
+        return '大';
+    }
+  };
+
+  console.log(selectedAni);
   return (
     <>
       <div style={{ background: '#FFBB4D', paddingBottom: '48px' }}>
@@ -146,6 +161,7 @@ const Main = () => {
               {data.map((pet) => {
                 return (
                   <li
+                    key={pet.animal_id}
                     style={{
                       width: '380px',
                       background: '#FFF5E1',
@@ -190,14 +206,20 @@ const Main = () => {
                         }}
                       >
                         <p>
-                          <span style={{ color: '#666' }}>種類 : </span>狗
+                          <span style={{ color: '#666' }}>種類 : </span>
+                          {pet.animal_id}
                         </p>
                         <p style={{ margin: '6px 0' }}>體型 :狗</p>
-                        <p>收容所 :新北市中和區公立動物之家</p>
+                        <p onClick={() => setShowModal((prev) => !prev)}>
+                          收容所 :新北市中和區公立動物之家
+                        </p>
                       </div>
                     </div>
-                    <Link
-                      to="/"
+                    <button
+                      onClick={() => {
+                        setShowModal((prev) => !prev);
+                        setSelectedAni(pet);
+                      }}
                       style={{
                         background: '#FFBB4D',
                         padding: '4px 16px',
@@ -208,15 +230,79 @@ const Main = () => {
                         top: '16px',
                         color: '#fff',
                         textDecoration: 'none',
+                        cursor: 'pointer',
+                        zIndex: '999',
+                        border: 'none',
                       }}
                     >
                       詳細資料
-                    </Link>
+                    </button>
                   </li>
                 );
               })}
             </ul>
           </div>
+          {showModal && (
+            <div
+              style={{
+                width: '100vw',
+                height: '100vh',
+                background: 'rgba(0,0,0,.8)',
+                position: 'fixed',
+                top: '0',
+                left: '0',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                zIndex: '9999',
+              }}
+            >
+              <div
+                style={{
+                  width: '315px',
+                  height: 'auto',
+                  background: '#FFF5E1',
+                  padding: '16px 32px 32px 32px',
+                  borderRadius: '16px',
+                }}
+              >
+                <div style={{ textAlign: 'right' }}>
+                  <button onClick={() => setShowModal((prev) => !prev)}>
+                    clock
+                  </button>
+                </div>
+                <div style={{}}>
+                  <div
+                    style={{
+                      background: 'lightgrey',
+                      backgroundImage: `url(${selectedAni.album_file})`,
+                      width: '250px',
+                      height: '250px',
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'top center',
+                      borderRadius: '10px',
+
+                      marginBottom: '8px',
+                    }}
+                  ></div>
+                  <div style={{ lineHeight: '1.5' }}>
+                    <p style={{ fontSize: '15px', letterSpacing: '.5px' }}>
+                      id: {selectedAni.animal_id}
+                    </p>
+                    <p>體型: {renderBodyType(selectedAni.animal_bodytype)}</p>
+                    <p>性別: {selectedAni.animal_sex}</p>
+                    <p>毛色: {selectedAni.animal_colour}</p>
+                    <p>收容所: {selectedAni.shelter_name}</p>
+                    <p>收容所電話: {selectedAni.shelter_tel}</p>
+                    <p>
+                      收容所地址: <br />
+                      {selectedAni.shelter_address}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>
