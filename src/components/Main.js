@@ -1,27 +1,45 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import Paginate from 'react-paginate';
+import Modal from './Modal';
 
 import Paw from '../assets/paw.png';
+import { shelters } from '../config/shelter';
 
 const Main = () => {
-  const [data, setData] = useState([]);
+  // Select Input
+  const [data, setData] = useState('');
   const [shelter, setShelter] = useState('');
   const [kind, setKind] = useState('');
+
+  // Modal
   const [showModal, setShowModal] = useState(true);
   const [selectedAni, setSelectedAni] = useState('');
 
+  // Pagination
+  const itemsPerPage = 10;
+  const [curItems, setCurItems] = useState('');
+  const [pageCount, setPageCount] = useState(0);
+  const [itemOffset, setItemOffset] = useState(0);
+
+  useEffect(() => {
+    if (data) {
+      const endOffest = itemOffset + itemsPerPage;
+      setCurItems(data.slice(itemOffset, endOffest));
+      setPageCount(Math.ceil(data.length / itemsPerPage));
+    }
+  }, [data, itemOffset]);
+
   const fetchData = (shelter = '', kind = '') => {
     fetch(
-      `https://data.coa.gov.tw/Service/OpenData/TransService.aspx?UnitId=QcbUEzN6E6DL&$top=10&animal_id=&animal_shelter_pkid=${shelter}&animal_kind=${kind}`
+      `https://data.coa.gov.tw/Service/OpenData/TransService.aspx?UnitId=QcbUEzN6E6DL&$top=100&animal_id=&animal_shelter_pkid=${shelter}&animal_kind=${kind}`
     )
       .then((res) => {
-        // console.log(res.json());
-        // console.log(res.json());
         return res.json();
       })
       .then((data) => {
         setData(data);
-        console.log(data);
+        // console.log(data);
       })
       .catch((err) => {
         console.log(err);
@@ -30,11 +48,15 @@ const Main = () => {
 
   const onShelterChange = (e) => {
     setShelter(e.target.value);
+    // setPageCount(0);
+    // setCurItems('');
     fetchData(e.target.value, kind);
   };
 
   const onKindChange = (e) => {
     setKind(e.target.value);
+    // setPageCount(0);
+    // setCurItems('');
     fetchData(shelter, e.target.value);
   };
 
@@ -49,7 +71,14 @@ const Main = () => {
     }
   };
 
-  console.log(selectedAni);
+  const onPageClick = (e) => {
+    console.log(e.selected);
+    const newOffset = (e.selected * itemsPerPage) % data.length;
+    setItemOffset(newOffset);
+  };
+
+  console.log(shelters);
+  // console.log(pageCount);
   return (
     <>
       <div style={{ background: '#FFBB4D', paddingBottom: '48px' }}>
@@ -58,16 +87,22 @@ const Main = () => {
             style={{
               border: '1px solid rgba(0,0,0,.2)',
               padding: '24px',
-              background: 'lightblue',
+              background: '#fff',
+              boxShadow: '0 2px 16px rgba(211,149,60,.6)',
+              borderRadius: '4px',
             }}
           >
             <select onChange={onKindChange}>
               <option value="">Type</option>
+              <option value="%E7%8B%97">Dog</option>
               <option value="%E8%B2%93">Cat</option>
             </select>
             <select onChange={onShelterChange}>
               <option value="">All</option>
-              <option value="48">基隆市寵物銀行</option>
+              {shelters.map((el) => {
+                return <option value={el.id}>{el.name}</option>;
+              })}
+              {/* <option value="48">基隆市寵物銀行</option> */}
             </select>
           </div>
           <div>
@@ -158,150 +193,107 @@ const Main = () => {
               </li>
               <li style={{ width: '380px', background: 'lightgrey' }}>21</li>
               <li style={{ width: '380px', background: 'lightgrey' }}>21</li> */}
-              {data.map((pet) => {
-                return (
-                  <li
-                    key={pet.animal_id}
-                    style={{
-                      width: '380px',
-                      background: '#FFF5E1',
-                      padding: '16px',
-                      borderRadius: '16px',
-                      boxShadow: '0 2px 16px rgba(211,149,60,.6)',
-                      position: 'relative',
-                      marginBottom: '16px',
-                      overflow: 'hidden',
-                    }}
-                  >
-                    <img
-                      src={Paw}
+              {curItems &&
+                curItems.map((pet) => {
+                  return (
+                    <li
+                      key={pet.animal_id}
                       style={{
-                        position: 'absolute',
-                        width: ' 150px',
-                        height: 'auto',
-                        right: ' 10px',
-                        bottom: '-20px',
-                      }}
-                    />
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <div
-                        style={{
-                          background: 'lightgrey',
-                          backgroundImage: `url(${pet.album_file})`,
-                          width: '80px',
-                          height: '80px',
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'top center',
-                          borderRadius: '10px',
-
-                          marginRight: '16px',
-                        }}
-                      ></div>
-                      <div
-                        style={{
-                          fontSize: '15px',
-                          letterSpacing: '1px',
-                          position: 'relative',
-                          zIndex: '999',
-                        }}
-                      >
-                        <p>
-                          <span style={{ color: '#666' }}>種類 : </span>
-                          {pet.animal_id}
-                        </p>
-                        <p style={{ margin: '6px 0' }}>體型 :狗</p>
-                        <p onClick={() => setShowModal((prev) => !prev)}>
-                          收容所 :新北市中和區公立動物之家
-                        </p>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => {
-                        setShowModal((prev) => !prev);
-                        setSelectedAni(pet);
-                      }}
-                      style={{
-                        background: '#FFBB4D',
-                        padding: '4px 16px',
-                        borderRadius: '4px',
-                        fontSize: '14px',
-                        position: 'absolute',
-                        right: '20px',
-                        top: '16px',
-                        color: '#fff',
-                        textDecoration: 'none',
-                        cursor: 'pointer',
-                        zIndex: '999',
-                        border: 'none',
+                        width: '380px',
+                        background: '#FFF5E1',
+                        padding: '16px',
+                        borderRadius: '16px',
+                        boxShadow: '0 2px 16px rgba(211,149,60,.6)',
+                        position: 'relative',
+                        marginBottom: '16px',
+                        overflow: 'hidden',
                       }}
                     >
-                      詳細資料
-                    </button>
-                  </li>
-                );
-              })}
+                      <img
+                        src={Paw}
+                        style={{
+                          position: 'absolute',
+                          width: ' 150px',
+                          height: 'auto',
+                          right: ' 10px',
+                          bottom: '-20px',
+                        }}
+                      />
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <div
+                          style={{
+                            background: 'lightgrey',
+                            backgroundImage: `url(${pet.album_file})`,
+                            width: '80px',
+                            height: '80px',
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'top center',
+                            borderRadius: '10px',
+
+                            marginRight: '16px',
+                          }}
+                        ></div>
+                        <div
+                          style={{
+                            fontSize: '15px',
+                            letterSpacing: '1px',
+                            position: 'relative',
+                            zIndex: '999',
+                          }}
+                        >
+                          <p>
+                            <span>種類 : </span>
+                            {pet.animal_kind}
+                          </p>
+                          <p style={{ margin: '6px 0' }}>
+                            體型 : {renderBodyType(pet.animal_bodytype)}
+                          </p>
+                          <p>收容所 : {pet.shelter_name}</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setShowModal((prev) => !prev);
+                          setSelectedAni(pet);
+                        }}
+                        style={{
+                          background: '#FFBB4D',
+                          padding: '4px 16px',
+                          borderRadius: '4px',
+                          fontSize: '14px',
+                          position: 'absolute',
+                          right: '20px',
+                          top: '16px',
+                          color: '#fff',
+                          textDecoration: 'none',
+                          cursor: 'pointer',
+                          zIndex: '999',
+                          border: 'none',
+                        }}
+                      >
+                        詳細資料
+                      </button>
+                    </li>
+                  );
+                })}
             </ul>
           </div>
+          <Paginate
+            pageCount={pageCount}
+            onPageChange={onPageClick}
+            renderOnZeroPageCount={null}
+            containerClassName="pagi-container"
+            activeClassName="pagi-active-page"
+            activeLinkClassName="pagi-active-link"
+            nextLabel={null}
+            previousLabel={null}
+          />
           {showModal && (
-            <div
-              style={{
-                width: '100vw',
-                height: '100vh',
-                background: 'rgba(0,0,0,.8)',
-                position: 'fixed',
-                top: '0',
-                left: '0',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                zIndex: '9999',
-              }}
-            >
-              <div
-                style={{
-                  width: '315px',
-                  height: 'auto',
-                  background: '#FFF5E1',
-                  padding: '16px 32px 32px 32px',
-                  borderRadius: '16px',
-                }}
-              >
-                <div style={{ textAlign: 'right' }}>
-                  <button onClick={() => setShowModal((prev) => !prev)}>
-                    clock
-                  </button>
-                </div>
-                <div style={{}}>
-                  <div
-                    style={{
-                      background: 'lightgrey',
-                      backgroundImage: `url(${selectedAni.album_file})`,
-                      width: '250px',
-                      height: '250px',
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'top center',
-                      borderRadius: '10px',
-
-                      marginBottom: '8px',
-                    }}
-                  ></div>
-                  <div style={{ lineHeight: '1.5' }}>
-                    <p style={{ fontSize: '15px', letterSpacing: '.5px' }}>
-                      id: {selectedAni.animal_id}
-                    </p>
-                    <p>體型: {renderBodyType(selectedAni.animal_bodytype)}</p>
-                    <p>性別: {selectedAni.animal_sex}</p>
-                    <p>毛色: {selectedAni.animal_colour}</p>
-                    <p>收容所: {selectedAni.shelter_name}</p>
-                    <p>收容所電話: {selectedAni.shelter_tel}</p>
-                    <p>
-                      收容所地址: <br />
-                      {selectedAni.shelter_address}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Modal
+              setShowModal={setShowModal}
+              selectedAni={selectedAni}
+              renderBodyType={renderBodyType}
+            />
           )}
         </div>
       </div>
