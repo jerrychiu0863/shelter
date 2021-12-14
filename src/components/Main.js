@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import Paginate from 'react-paginate';
 import Modal from './Modal';
 
@@ -13,7 +12,7 @@ const Main = () => {
   const [kind, setKind] = useState('');
 
   // Modal
-  const [showModal, setShowModal] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const [selectedAni, setSelectedAni] = useState('');
 
   // Pagination
@@ -71,13 +70,30 @@ const Main = () => {
     }
   };
 
+  const renderStatus = (status) => {
+    switch (status) {
+      case 'NONE':
+        return '未公告';
+      case 'OPEN':
+        return '開放認養';
+      case 'ADOPTED':
+        return '已認養';
+      case 'OTHER':
+        return '其他';
+      case 'DEAD':
+        return '死亡';
+      default:
+        return;
+    }
+  };
+
   const onPageClick = (e) => {
     console.log(e.selected);
     const newOffset = (e.selected * itemsPerPage) % data.length;
     setItemOffset(newOffset);
   };
 
-  console.log(shelters);
+  console.log(data);
   // console.log(pageCount);
   return (
     <>
@@ -99,8 +115,8 @@ const Main = () => {
             </select>
             <select onChange={onShelterChange}>
               <option value="">All</option>
-              {shelters.map((el) => {
-                return <option value={el.id}>{el.name}</option>;
+              {shelters.map(({ id, name }) => {
+                return <option value={id}>{name}</option>;
               })}
               {/* <option value="48">基隆市寵物銀行</option> */}
             </select>
@@ -242,8 +258,8 @@ const Main = () => {
                           }}
                         >
                           <p>
-                            <span>種類 : </span>
-                            {pet.animal_kind}
+                            <span>狀態 : </span>
+                            {renderStatus(pet.animal_status)}
                           </p>
                           <p style={{ margin: '6px 0' }}>
                             體型 : {renderBodyType(pet.animal_bodytype)}

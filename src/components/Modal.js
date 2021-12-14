@@ -11,6 +11,17 @@ const Modal = ({ setShowModal, selectedAni, renderBodyType }) => {
     }
   };
 
+  const renderGender = (gender) => {
+    switch (gender) {
+      case 'M':
+        return '公';
+      case 'F':
+        return '母';
+      case 'N':
+        return '未輸入';
+    }
+  };
+
   return (
     <div ref={modalRef} className="modal-bg" onClick={onClickModalBg}>
       <div className="modal-box">
@@ -31,10 +42,10 @@ const Modal = ({ setShowModal, selectedAni, renderBodyType }) => {
           </div>
           <div className="modal-info">
             <p style={{ fontSize: '15px', letterSpacing: '.5px' }}>
-              id: {selectedAni.animal_id}
+              id: {selectedAni.animal_status}
             </p>
             <p>體型: {renderBodyType(selectedAni.animal_bodytype)}</p>
-            <p>性別: {selectedAni.animal_sex}</p>
+            <p>性別: {renderGender(selectedAni.animal_sex)}</p>
             <p>毛色: {selectedAni.animal_colour}</p>
             <p>收容所: {selectedAni.shelter_name}</p>
             <p>收容所電話: {selectedAni.shelter_tel}</p>
