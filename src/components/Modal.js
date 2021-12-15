@@ -41,9 +41,9 @@ const Modal = ({ setShowModal, selectedAni, renderBodyType }) => {
             </button>
           </div>
           <div className="modal-info">
-            <p style={{ fontSize: '15px', letterSpacing: '.5px' }}>
+            {/* <p style={{ fontSize: '15px', letterSpacing: '.5px' }}>
               id: {selectedAni.animal_status}
-            </p>
+            </p> */}
             <p>體型: {renderBodyType(selectedAni.animal_bodytype)}</p>
             <p>性別: {renderGender(selectedAni.animal_sex)}</p>
             <p>毛色: {selectedAni.animal_colour}</p>

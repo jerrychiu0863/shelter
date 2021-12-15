@@ -3,7 +3,13 @@ import Paginate from 'react-paginate';
 import Modal from './Modal';
 
 import Paw from '../assets/paw.png';
-import { shelters } from '../config/shelter';
+import {
+  nShelters,
+  wShelters,
+  sShelters,
+  eShelters,
+  overseaShelters,
+} from '../config/shelter';
 
 const Main = () => {
   // Select Input
@@ -20,6 +26,10 @@ const Main = () => {
   const [curItems, setCurItems] = useState('');
   const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   useEffect(() => {
     if (data) {
@@ -93,44 +103,69 @@ const Main = () => {
     setItemOffset(newOffset);
   };
 
-  console.log(data);
+  console.log(nShelters);
   // console.log(pageCount);
   return (
     <>
-      <div style={{ background: '#FFBB4D', paddingBottom: '48px' }}>
-        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-          <div
-            style={{
-              border: '1px solid rgba(0,0,0,.2)',
-              padding: '24px',
-              background: '#fff',
-              boxShadow: '0 2px 16px rgba(211,149,60,.6)',
-              borderRadius: '4px',
-            }}
-          >
-            <select onChange={onKindChange}>
-              <option value="">Type</option>
-              <option value="%E7%8B%97">Dog</option>
-              <option value="%E8%B2%93">Cat</option>
+      <div className="main" style={{}}>
+        <div className="main-container">
+          <div className="main-select-container" style={{}}>
+            <select onChange={onKindChange} style={{ width: '70px' }}>
+              <option value="">種類</option>
+              <option value="%E7%8B%97">狗</option>
+              <option value="%E8%B2%93">貓</option>
             </select>
-            <select onChange={onShelterChange}>
-              <option value="">All</option>
-              {shelters.map(({ id, name }) => {
-                return <option value={id}>{name}</option>;
-              })}
-              {/* <option value="48">基隆市寵物銀行</option> */}
+            <select onChange={onShelterChange} style={{ width: '215px' }}>
+              <option value="">收容所</option>
+              <optgroup label="北部">
+                {nShelters.map(({ id, name }) => {
+                  return (
+                    <option key={id} value={id}>
+                      {name}
+                    </option>
+                  );
+                })}
+              </optgroup>
+              <optgroup label="中部">
+                {wShelters.map(({ id, name }) => {
+                  return (
+                    <option key={id} value={id}>
+                      {name}
+                    </option>
+                  );
+                })}
+              </optgroup>
+              <optgroup label="南部">
+                {sShelters.map(({ id, name }) => {
+                  return (
+                    <option key={id} value={id}>
+                      {name}
+                    </option>
+                  );
+                })}
+              </optgroup>
+              <optgroup label="東部">
+                {eShelters.map(({ id, name }) => {
+                  return (
+                    <option key={id} value={id}>
+                      {name}
+                    </option>
+                  );
+                })}
+              </optgroup>
+              <optgroup label="離島">
+                {overseaShelters.map(({ id, name }) => {
+                  return (
+                    <option key={id} value={id}>
+                      {name}
+                    </option>
+                  );
+                })}
+              </optgroup>
             </select>
           </div>
           <div>
-            <ul
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                listStyle: 'none',
-                marginTop: '24px',
-                flexWrap: 'wrap',
-              }}
-            >
+            <ul className="card-box" style={{}}>
               {/* <li
                 style={{
                   width: '380px',
@@ -212,19 +247,7 @@ const Main = () => {
               {curItems &&
                 curItems.map((pet) => {
                   return (
-                    <li
-                      key={pet.animal_id}
-                      style={{
-                        width: '380px',
-                        background: '#FFF5E1',
-                        padding: '16px',
-                        borderRadius: '16px',
-                        boxShadow: '0 2px 16px rgba(211,149,60,.6)',
-                        position: 'relative',
-                        marginBottom: '16px',
-                        overflow: 'hidden',
-                      }}
-                    >
+                    <li key={pet.animal_id} className="card">
                       <img
                         src={Paw}
                         style={{
@@ -237,6 +260,10 @@ const Main = () => {
                       />
                       <div style={{ display: 'flex', alignItems: 'center' }}>
                         <div
+                          onClick={() => {
+                            setShowModal((prev) => !prev);
+                            setSelectedAni(pet);
+                          }}
                           style={{
                             background: 'lightgrey',
                             backgroundImage: `url(${pet.album_file})`,
@@ -245,7 +272,7 @@ const Main = () => {
                             backgroundSize: 'cover',
                             backgroundPosition: 'top center',
                             borderRadius: '10px',
-
+                            cursor: 'pointer',
                             marginRight: '16px',
                           }}
                         ></div>

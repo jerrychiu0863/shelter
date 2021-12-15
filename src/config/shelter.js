@@ -1,4 +1,4 @@
-export const shelters = [
+export const nShelters = [
   {
     id: 48,
     name: '基隆市寵物銀行',
@@ -40,6 +40,10 @@ export const shelters = [
     name: '新北市三芝區公立動物之家',
   },
   {
+    id: 92,
+    name: '新北市政府動物保護防疫處',
+  },
+  {
     id: 61,
     name: '桃園市動物保護教育園區',
   },
@@ -50,6 +54,13 @@ export const shelters = [
   {
     id: 63,
     name: '新竹縣動物收容所',
+  },
+];
+
+export const wShelters = [
+  {
+    id: 96,
+    name: '苗栗縣生態保育教育中心',
   },
   {
     id: 67,
@@ -67,6 +78,13 @@ export const shelters = [
     id: 70,
     name: '南投縣公立動物收容所',
   },
+  {
+    id: 89,
+    name: '雲林縣流浪動物收容所',
+  },
+];
+
+export const sShelters = [
   {
     id: 71,
     name: '嘉義市流浪犬收容中心',
@@ -95,6 +113,9 @@ export const shelters = [
     id: 77,
     name: '屏東縣流浪動物收容所',
   },
+];
+
+export const eShelters = [
   {
     id: 78,
     name: '宜蘭縣流浪動物中途之家',
@@ -107,6 +128,9 @@ export const shelters = [
     id: 80,
     name: '台東縣動物收容中心',
   },
+];
+
+export const overseaShelters = [
   {
     id: 81,
     name: '連江縣流浪犬收容中心',
@@ -119,20 +143,12 @@ export const shelters = [
     id: 83,
     name: '澎湖縣流浪動物收容中心',
   },
-  {
-    id: 89,
-    name: '雲林縣流浪動物收容所',
-  },
-  {
-    id: 92,
-    name: '新北市政府動物保護防疫處',
-  },
-  {
-    id: 96,
-    name: '苗栗縣生態保育教育中心',
-  },
 ];
 
 export default {
-  shelters,
+  nShelters,
+  wShelters,
+  sShelters,
+  eShelters,
+  overseaShelters,
 };
