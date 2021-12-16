@@ -48,7 +48,7 @@ select {
 }
 
 /*Card*/
-.card-box {
+.list-container {
   display: flex;
   justify-content: space-between;
   list-style: none;
@@ -65,6 +65,47 @@ select {
   position: relative;
   margin-bottom: 16px;
   overflow: hidden;
+}
+
+.card-paw {
+  position: absolute;
+  width: 150px;
+  height: auto;
+  right: 10px;
+  bottom: -20px;
+}
+
+.card-img {
+  background: lightgrey;
+  width: 80px;
+  height: 80px;
+  background-size: cover;
+  background-position: top center;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-right: 16px;
+}
+
+.card-info {
+  font-size: 15px;
+  letter-spacing: 1px;
+  position: relative;
+  z-index: 999;
+}
+
+.card-detail {
+  background: #ffbb4d;
+  padding: 4px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  position: absolute;
+  right: 20px;
+  top: 16px;
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+  z-index: 999;
+  border: none;
 }
 
 /*Pagination*/

@@ -26,6 +26,7 @@ const Main = () => {
   const [curItems, setCurItems] = useState('');
   const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
+  const [selectedPage, setSelectedPage] = useState(0);
 
   useEffect(() => {
     fetchData();
@@ -57,15 +58,15 @@ const Main = () => {
 
   const onShelterChange = (e) => {
     setShelter(e.target.value);
-    // setPageCount(0);
-    // setCurItems('');
+    setItemOffset(0);
+    setSelectedPage(0);
     fetchData(e.target.value, kind);
   };
 
   const onKindChange = (e) => {
     setKind(e.target.value);
-    // setPageCount(0);
-    // setCurItems('');
+    setItemOffset(0);
+    setSelectedPage(0);
     fetchData(shelter, e.target.value);
   };
 
@@ -77,6 +78,8 @@ const Main = () => {
         return '中';
       case 'BIG':
         return '大';
+      default:
+        return;
     }
   };
 
@@ -98,18 +101,18 @@ const Main = () => {
   };
 
   const onPageClick = (e) => {
-    console.log(e.selected);
     const newOffset = (e.selected * itemsPerPage) % data.length;
     setItemOffset(newOffset);
+    setSelectedPage(e.selected);
   };
 
-  console.log(nShelters);
+  // console.log('render');
   // console.log(pageCount);
   return (
     <>
-      <div className="main" style={{}}>
+      <div className="main">
         <div className="main-container">
-          <div className="main-select-container" style={{}}>
+          <div className="main-select-container">
             <select onChange={onKindChange} style={{ width: '70px' }}>
               <option value="">種類</option>
               <option value="%E7%8B%97">狗</option>
@@ -165,125 +168,22 @@ const Main = () => {
             </select>
           </div>
           <div>
-            <ul className="card-box" style={{}}>
-              {/* <li
-                style={{
-                  width: '380px',
-                  background: '#FFF5E1',
-                  padding: '16px',
-                  borderRadius: '16px',
-                  boxShadow: '0 2px 16px rgba(211,149,60,.6)',
-                  position: 'relative',
-                  marginBottom: '16px',
-                  overflow: 'hidden',
-                }}
-              >
-                <img
-                  src={Paw}
-                  style={{
-                    position: 'absolute',
-                    width: ' 150px',
-                    height: 'auto',
-                    right: ' 10px',
-                    bottom: '-20px',
-                  }}
-                />
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <div
-                    style={{
-                      // backgroundImage: `url(${pet.album_file})`,
-                      width: '80px',
-                      height: '80px',
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'top center',
-                      borderRadius: '10px',
-                      background: 'lightgrey',
-                      marginRight: '16px',
-                    }}
-                  ></div>
-                  <div
-                    style={{
-                      fontSize: '15px',
-                      letterSpacing: '1px',
-                      position: 'relative',
-                      zIndex: '999',
-                    }}
-                  >
-                    <p>
-                      <span style={{ color: '#666' }}>種類 : </span>狗
-                    </p>
-                    <p style={{ margin: '6px 0' }}>體型 :狗</p>
-                    <p>收容所 :新北市中和區公立動物之家</p>
-                  </div>
-                </div>
-                <Link
-                  to="/"
-                  style={{
-                    background: '#FFBB4D',
-                    padding: '4px 16px',
-                    borderRadius: '4px',
-                    fontSize: '14px',
-                    position: 'absolute',
-                    right: '20px',
-                    top: '16px',
-                    color: '#fff',
-                    textDecoration: 'none',
-                  }}
-                >
-                  詳細資料
-                </Link>
-              </li>
-              <li
-                style={{
-                  width: '380px',
-                  background: 'lightgrey',
-                  marginBottom: '16px',
-                }}
-              >
-                21
-              </li>
-              <li style={{ width: '380px', background: 'lightgrey' }}>21</li>
-              <li style={{ width: '380px', background: 'lightgrey' }}>21</li> */}
+            <ul className="list-container">
               {curItems &&
                 curItems.map((pet) => {
                   return (
                     <li key={pet.animal_id} className="card">
-                      <img
-                        src={Paw}
-                        style={{
-                          position: 'absolute',
-                          width: ' 150px',
-                          height: 'auto',
-                          right: ' 10px',
-                          bottom: '-20px',
-                        }}
-                      />
+                      <img src={Paw} className="card-paw" alt="paw" />
                       <div style={{ display: 'flex', alignItems: 'center' }}>
                         <div
                           onClick={() => {
                             setShowModal((prev) => !prev);
                             setSelectedAni(pet);
                           }}
-                          style={{
-                            background: 'lightgrey',
-                            backgroundImage: `url(${pet.album_file})`,
-                            width: '80px',
-                            height: '80px',
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'top center',
-                            borderRadius: '10px',
-                            cursor: 'pointer',
-                            marginRight: '16px',
-                          }}
+                          className="card-img"
+                          style={{ backgroundImage: `url(${pet.album_file})` }}
                         ></div>
-                        <div
-                          style={{
-                            fontSize: '15px',
-                            letterSpacing: '1px',
-                            position: 'relative',
-                            zIndex: '999',
-                          }}
-                        >
+                        <div className="card-info">
                           <p>
                             <span>狀態 : </span>
                             {renderStatus(pet.animal_status)}
@@ -299,20 +199,7 @@ const Main = () => {
                           setShowModal((prev) => !prev);
                           setSelectedAni(pet);
                         }}
-                        style={{
-                          background: '#FFBB4D',
-                          padding: '4px 16px',
-                          borderRadius: '4px',
-                          fontSize: '14px',
-                          position: 'absolute',
-                          right: '20px',
-                          top: '16px',
-                          color: '#fff',
-                          textDecoration: 'none',
-                          cursor: 'pointer',
-                          zIndex: '999',
-                          border: 'none',
-                        }}
+                        className="card-detail"
                       >
                         詳細資料
                       </button>
@@ -330,6 +217,7 @@ const Main = () => {
             activeLinkClassName="pagi-active-link"
             nextLabel={null}
             previousLabel={null}
+            forcePage={selectedPage}
           />
           {showModal && (
             <Modal

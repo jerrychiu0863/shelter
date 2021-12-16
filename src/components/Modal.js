@@ -19,6 +19,8 @@ const Modal = ({ setShowModal, selectedAni, renderBodyType }) => {
         return '母';
       case 'N':
         return '未輸入';
+      default:
+        return;
     }
   };
 
