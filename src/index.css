@@ -37,8 +37,10 @@ code {
   background: #fff;
   box-shadow: 0 2px 16px rgba(211, 149, 60, 0.6);
   border-radius: 4px;
-  /*Remove default style on safari*/
+  /*Remove default style*/
   -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 select {
