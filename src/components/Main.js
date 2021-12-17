@@ -12,8 +12,10 @@ import {
 } from '../config/shelter';
 
 const Main = () => {
-  // Select Input
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState('');
+
+  // Select Input
   const [shelter, setShelter] = useState('');
   const [kind, setKind] = useState('');
 
@@ -49,6 +51,7 @@ const Main = () => {
       })
       .then((data) => {
         setData(data);
+        setLoading(false);
         // console.log(data);
       })
       .catch((err) => {
@@ -60,6 +63,7 @@ const Main = () => {
     setShelter(e.target.value);
     setItemOffset(0);
     setSelectedPage(0);
+    setLoading(true);
     fetchData(e.target.value, kind);
   };
 
@@ -67,6 +71,7 @@ const Main = () => {
     setKind(e.target.value);
     setItemOffset(0);
     setSelectedPage(0);
+    setLoading(true);
     fetchData(shelter, e.target.value);
   };
 
@@ -168,57 +173,68 @@ const Main = () => {
             </select>
           </div>
           <div>
-            <ul className="list-container">
-              {curItems &&
-                curItems.map((pet) => {
-                  return (
-                    <li key={pet.animal_id} className="card">
-                      <img src={Paw} className="card-paw" alt="paw" />
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <div
+            {loading && (
+              <div className="loader">
+                <i class="fas fa-spinner"></i>
+              </div>
+            )}
+            {!loading && (
+              <ul className="list-container">
+                {curItems &&
+                  curItems.map((pet) => {
+                    return (
+                      <li key={pet.animal_id} className="card">
+                        <img src={Paw} className="card-paw" alt="paw" />
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          <div
+                            onClick={() => {
+                              setShowModal((prev) => !prev);
+                              setSelectedAni(pet);
+                            }}
+                            className="card-img"
+                            style={{
+                              backgroundImage: `url(${pet.album_file})`,
+                            }}
+                          ></div>
+                          <div className="card-info">
+                            <p>
+                              <span>狀態 : </span>
+                              {renderStatus(pet.animal_status)}
+                            </p>
+                            <p style={{ margin: '6px 0' }}>
+                              體型 : {renderBodyType(pet.animal_bodytype)}
+                            </p>
+                            <p>收容所 : {pet.shelter_name}</p>
+                          </div>
+                        </div>
+                        <button
                           onClick={() => {
                             setShowModal((prev) => !prev);
                             setSelectedAni(pet);
                           }}
-                          className="card-img"
-                          style={{ backgroundImage: `url(${pet.album_file})` }}
-                        ></div>
-                        <div className="card-info">
-                          <p>
-                            <span>狀態 : </span>
-                            {renderStatus(pet.animal_status)}
-                          </p>
-                          <p style={{ margin: '6px 0' }}>
-                            體型 : {renderBodyType(pet.animal_bodytype)}
-                          </p>
-                          <p>收容所 : {pet.shelter_name}</p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => {
-                          setShowModal((prev) => !prev);
-                          setSelectedAni(pet);
-                        }}
-                        className="card-detail"
-                      >
-                        詳細資料
-                      </button>
-                    </li>
-                  );
-                })}
-            </ul>
+                          className="card-detail"
+                        >
+                          詳細資料
+                        </button>
+                      </li>
+                    );
+                  })}
+              </ul>
+            )}
           </div>
-          <Paginate
-            pageCount={pageCount}
-            onPageChange={onPageClick}
-            renderOnZeroPageCount={null}
-            containerClassName="pagi-container"
-            activeClassName="pagi-active-page"
-            activeLinkClassName="pagi-active-link"
-            nextLabel={null}
-            previousLabel={null}
-            forcePage={selectedPage}
-          />
+          {!loading && (
+            <Paginate
+              pageCount={pageCount}
+              onPageChange={onPageClick}
+              renderOnZeroPageCount={null}
+              containerClassName="pagi-container"
+              activeClassName="pagi-active-page"
+              activeLinkClassName="pagi-active-link"
+              nextLabel={null}
+              previousLabel={null}
+              forcePage={selectedPage}
+            />
+          )}
           {showModal && (
             <Modal
               setShowModal={setShowModal}

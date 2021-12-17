@@ -4,7 +4,7 @@ import './App.css';
 import Main from './components/Main';
 
 //image
-import Banner from './assets/banner-2.jpg';
+import Banner from './assets/shelter-banner.jpg';
 
 function App() {
   return (

@@ -22,7 +22,8 @@ code {
 /*Main*/
 .main {
   padding-bottom: 48px;
-  min-height: 100%;
+  /*let it expand all screen*/
+  min-height: calc(100vh - 925px);
 }
 
 .main-container {
@@ -49,6 +50,24 @@ select {
   border: 2px solid #ffdd92;
   margin-right: 16px;
   border-radius: 4px;
+}
+
+/*loader*/
+.loader {
+  text-align: center;
+  font-size: 48px;
+  color: #ffdd92;
+  margin-top: 24px;
+  animation: spining 3s ease-in-out infinite;
+}
+
+@keyframes spining {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /*Card*/
@@ -88,6 +107,10 @@ select {
   border-radius: 10px;
   cursor: pointer;
   margin-right: 16px;
+}
+
+.card-img:hover {
+  opacity: 0.8;
 }
 
 .card-info {
@@ -203,6 +226,7 @@ select {
 @media screen and (max-width: 430px) {
   .main {
     padding: 16px;
+    min-height: calc(100vh - 325px);
   }
 
   .main-select-container {
